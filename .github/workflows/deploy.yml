@@ -15,13 +15,13 @@ jobs:
       - name: Set Up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H YOUR_SERVER_IP >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/ubuntu_private
+          chmod 600 ~/.ssh/ubuntu_private
+          ssh-keyscan -H 54.157.49.127 >> ~/.ssh/known_hosts
 
       - name: Deploy Application
         run: |
-          ssh ubuntu@YOUR_SERVER_IP << 'EOF'
+          ssh ubuntu@54.157.49.127 << 'EOF'
           cd /home/ubuntu/fastapi-book-project  
           git pull origin main
           docker-compose down
