@@ -15,8 +15,8 @@ jobs:
       - name: Set Up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/ubuntu_private
-          chmod 600 ~/.ssh/ubuntu_private
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ubuntu
+          chmod 600 ~/.ssh/id_ubuntu
           ssh-keyscan -H 54.157.49.127 >> ~/.ssh/known_hosts
 
       - name: Deploy Application
