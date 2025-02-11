@@ -12,6 +12,18 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Set Up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H YOUR_SERVER_IP >> ~/.ssh/known_hosts
+
       - name: Deploy Application
         run: |
-          echo "Deploying application..."
+          ssh ubuntu@YOUR_SERVER_IP << 'EOF'
+          cd /home/ubuntu/fastapi-book-project  # Update with actual path
+          git pull origin main
+          docker-compose down
+          docker-compose up --build -d
+          EOF
