@@ -1,4 +1,4 @@
-name: Deployment Pipeline
+name: CD Pipeline
 
 on:
   push:
@@ -7,23 +7,21 @@ on:
 
 jobs:
   deploy:
+    name: deploy
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set Up SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ubuntu
-          chmod 600 ~/.ssh/id_ubuntu
-          ssh-keyscan -H 54.157.49.127 >> ~/.ssh/known_hosts
-
-      - name: Deploy Application
-        run: |
-          ssh ubuntu@54.157.49.127 << 'EOF'
-          cd /home/ubuntu/fastapi-book-project  
-          git pull origin main
-          docker-compose down
-          docker-compose up --build -d
-          EOF
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/fastapi-book-project || exit 1
+            git pull origin main
+            sudo docker-compose down
+            sudo docker-compose up -d --build
